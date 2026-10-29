@@ -59,7 +59,11 @@ static arr_t(const char *) get_instance_extensions() {
 }
 
 static void create_instance(device_t *device) {
+#ifdef ENABLE_VALIDATION_LAYERS
   const char *validation_layers[] = {"VK_LAYER_KHRONOS_validation"};
+#else
+  const char *validation_layers[] = {};
+#endif
 
   VkApplicationInfo app_info = {
       .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -100,12 +104,14 @@ static void create_instance(device_t *device) {
   } while (false)
 
 static void load_instance_functions(device_t *device) {
+#ifdef ENABLE_VALIDATION_LAYERS
   LOAD_INSTANCE_FUNCTION(device, vkCreateDebugUtilsMessengerEXT);
   LOAD_INSTANCE_FUNCTION(device, vkDestroyDebugUtilsMessengerEXT);
+#endif
 }
 
 static void create_debug_messenger(device_t *device) {
-#ifndef NDEBUG
+#ifdef ENABLE_VALIDATION_LAYERS
   vk_try(device->functions.vkCreateDebugUtilsMessengerEXT(
       device->instance, get_debug_messenger_info(), NULL,
       &device->debug_messenger));
@@ -255,7 +261,7 @@ void device_init(device_t *device, window_t *windows[], usize window_count) {
 void device_cleanup(device_t *device) {
   vkDestroyCommandPool(device->device, device->command_pool, NULL);
   vkDestroyDevice(device->device, NULL);
-#ifndef NDEBUG
+#ifdef ENABLE_VALIDATION_LAYERS
   device->functions.vkDestroyDebugUtilsMessengerEXT(
       device->instance, device->debug_messenger, NULL);
 #endif

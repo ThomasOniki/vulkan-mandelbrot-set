@@ -6,8 +6,10 @@
 #include <GLFW/glfw3.h>
 
 typedef struct {
+#ifdef ENABLE_VALIDATION_LAYERS
   PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT;
   PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessengerEXT;
+#endif
 } vk_functions_t;
 
 struct device_t {

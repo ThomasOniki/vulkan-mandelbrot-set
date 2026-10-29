@@ -13,3 +13,14 @@ target_precompile_headers(vulkan-mandelbrot-set PRIVATE "src/pch.h")
 set_target_properties(vulkan-mandelbrot-set PROPERTIES C_STANDARD 99)
 set_target_properties(vulkan-mandelbrot-set PROPERTIES C_STANDARD_REQUIRED ON)
 set_target_properties(vulkan-mandelbrot-set PROPERTIES C_EXTENSIONS OFF)
+
+option(ENABLE_VALIDATION_LAYERS
+       "Enable VK_LAYER_khronos_validation in release." OFF)
+
+if(ENABLE_VALIDATION_LAYERS)
+  target_compile_definitions(vulkan-mandelbrot-set
+                             PRIVATE ENABLE_VALIDATION_LAYERS)
+else()
+  target_compile_definitions(
+    vulkan-mandelbrot-set PRIVATE $<$<CONFIG:Debug>:ENABLE_VALIDATION_LAYERS>)
+endif()
